@@ -1,6 +1,7 @@
 package com.token.authenticate.configuration;
 
 import com.token.authenticate.service.UserService;
+import com.token.authenticate.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +38,15 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 한번요청할때
             return;
         }
 
+        // Bearer 제거 - token만 가져오기
+        String token = authorizationHeader.split(" ")[1];
 
+        // Token Expired 만료 확인
+        if(JwtTokenUtil.isExpired(token, secretKey)){
+            log.error("token이 만료되었습니다.");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 문열어주기
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("",null, List.of(new SimpleGrantedAuthority("USER")));

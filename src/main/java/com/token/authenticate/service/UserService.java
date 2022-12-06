@@ -5,7 +5,9 @@ import com.token.authenticate.domain.dto.UserJoinResponse;
 import com.token.authenticate.exception.AppException;
 import com.token.authenticate.exception.ErrorCode;
 import com.token.authenticate.repository.UserRepository;
+import com.token.authenticate.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    @Value("${jwt.token.secret}") // springframework
+    private String key; // 키
+    private Long expireTimeMs = 1000 * 60 * 60l; // expireTime : 1hour
     public String join(String userName, String password) {
         // userName이 이미 존재함
         userRepository.findByUserName(userName)
@@ -38,6 +43,8 @@ public class UserService {
         if(!encoder.matches(selectedUser.getPassword(), password)) {
             throw new AppException(ErrorCode.INVALID_PASSWORD,password+"가 틀렸습니다.");
         }
-        return "token 리턴";
+        // 예외가 없다면 토큰 발행
+        String token = JwtTokenUtil.createToken(selectedUser.getUserName(),key,expireTimeMs);
+        return token;
     }
 }

@@ -11,6 +11,7 @@ public class JwtTokenUtil {
         Claims claims = Jwts.claims(); // 일종의 map
         claims.put("userName",userName);
 
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

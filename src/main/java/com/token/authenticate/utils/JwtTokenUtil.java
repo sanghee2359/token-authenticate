@@ -7,6 +7,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 
 public class JwtTokenUtil {
+    public static boolean isExpired(String token, String secretKey){
+        // token의 만료가 현재 date보다 이전인지 확인
+        return Jwts.parser().setSigningKey(secretKey)
+                .parseClaimsJws(token).getBody().getExpiration().before(new Date());
+    }
     public static String createToken(String userName, String key, long expiredTimeMs){
         Claims claims = Jwts.claims(); // 일종의 map
         claims.put("userName",userName);

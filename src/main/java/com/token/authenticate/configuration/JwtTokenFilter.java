@@ -31,8 +31,8 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 한번요청할때
         log.info("authorizationHeader:{}", authorizationHeader);
 
         // header이 존재하지 않을 경우 block
-        if(authorizationHeader == null) {
-            log.error("authorizationHeader이 없습니다.");
+        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) { // 토큰의 형식 : 시작할 때 맨앞에 Bearer 붙여서 보내야 한다.
+            log.error("authorizationHeader이 잘못되었습니다.");
             filterChain.doFilter(request, response);
             return;
         }

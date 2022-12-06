@@ -32,10 +32,12 @@ public class UserService {
 
     public  String login(String userName, String password){
         // userName 없을경우
-        userRepository.findByUserName(userName)
+        User selectedUser = userRepository.findByUserName(userName)
                 .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOTFOUND, userName+"이 없습니다."));
         // password 틀릴경우
-        //
+        if(!encoder.matches(selectedUser.getPassword(), password)) {
+            throw new AppException(ErrorCode.INVALID_PASSWORD,password+"가 틀렸습니다.");
+        }
         return "token 리턴";
     }
 }

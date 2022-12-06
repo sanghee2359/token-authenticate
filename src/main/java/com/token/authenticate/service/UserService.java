@@ -40,7 +40,7 @@ public class UserService {
         User selectedUser = userRepository.findByUserName(userName)
                 .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOTFOUND, userName+"이 없습니다."));
         // password 틀릴경우
-        if(!encoder.matches(selectedUser.getPassword(), password)) {
+        if(!encoder.matches(password, selectedUser.getPassword())) {
             throw new AppException(ErrorCode.INVALID_PASSWORD,password+"가 틀렸습니다.");
         }
         // 예외가 없다면 토큰 발행
